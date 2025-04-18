@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "strict": true,
+    "outDir": "dist",
+    "skipLibCheck": true, // d.ts 파일의 타입을 검사하지 않는다
+    "allowJs": true,
+    "jsx": "react-jsx",
+    "isolatedModules": true,
+    "strictNullChecks": true,
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true // 파일명의 대소문자를 구분한다
+  },
+  "include": ["src", "vites.config.js", "vite-env.d.ts"],
+  "exclude": ["node_modules"]
+}
