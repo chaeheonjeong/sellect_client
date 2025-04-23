@@ -1,6 +1,6 @@
 // CouponRegisterPage.jsx
 import React, { useState, useEffect } from 'react';
-import useApiService from "../services/ApiService.js";
+import useApiService from "../services/ApiService.ts";
 
 const VITE_API_BASE_URL = import.meta.env.VITE_API_BASE_URL; // 환경 변수 불러오기
 

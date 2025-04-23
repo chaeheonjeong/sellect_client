@@ -4,7 +4,7 @@ import {useNavigate} from "react-router-dom";
 import axios from "axios";
 import {ShoppingCartIcon} from "@heroicons/react/24/solid";
 import {useAuth} from "../../context/AuthContext.jsx";
-import useApiService from "../../services/ApiService.js";
+import useApiService from "../../services/ApiService.ts";
 
 const VITE_API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 

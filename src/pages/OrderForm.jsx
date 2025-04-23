@@ -1,15 +1,14 @@
-import React, {useEffect, useState} from "react";
-import {useLocation, useNavigate} from "react-router-dom";
-import CartOrderItem from "../components/order/OrderItem.jsx";
-import CouponItem from "../components/CouponItem";
-import PaymentSummary from "../components/order/PaymentSummary";
-import {useAuth} from "../context/AuthContext.jsx";
-import useApiService from "../services/ApiService.js";
+import React, { useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import CartOrderItem from '../components/order/OrderItem.jsx';
+import CouponItem from '../components/CouponItem';
+import PaymentSummary from '../components/order/PaymentSummary';
+import { useAuth } from '../context/AuthContext.jsx';
+import useApiService from '../services/ApiService.ts';
 
 const VITE_API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 function OrderForm() {
-  console.log(1111);
   const [orderItems, setOrderItems] = useState([]);
   const [coupons, setCoupons] = useState([]);
   const [coupon, setCoupon] = useState(null);
@@ -19,7 +18,7 @@ function OrderForm() {
   const [error, setError] = useState(null);
   const [couponError, setCouponError] = useState(null);
   const { updateCartCount } = useAuth();
-  const {get, post } = useApiService();
+  const { get, post } = useApiService();
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -28,8 +27,8 @@ function OrderForm() {
   // 결제 성공 메시지 리스너
   useEffect(() => {
     const handlePaymentMessage = (event) => {
-      if (event.data === "PAYMENT_SUCCESS") {
-        navigate("/order/complete", {
+      if (event.data === 'PAYMENT_SUCCESS') {
+        navigate('/order/complete', {
           state: {
             orderId: orderId,
             totalAmount: finalPrice,
@@ -38,32 +37,33 @@ function OrderForm() {
       }
     };
 
-    window.addEventListener("message", handlePaymentMessage);
-    return () => window.removeEventListener("message", handlePaymentMessage);
+    window.addEventListener('message', handlePaymentMessage);
+    return () => window.removeEventListener('message', handlePaymentMessage);
   }, [navigate, orderId]);
 
   // 주문 상품 가져오기
   useEffect(() => {
     if (!orderId) {
-      alert("유효한 주문 ID가 없습니다.");
-      navigate("/cart");
+      alert('유효한 주문 ID가 없습니다.');
+      navigate('/cart');
       return;
     }
 
     const fetchOrderItems = async () => {
       try {
-
-        const response = await get(`${VITE_API_BASE_URL}/api/v1/orders/${orderId}/pending`);
-        console.log("test:", response);
+        const response = await get(
+          `${VITE_API_BASE_URL}/api/v1/orders/${orderId}/pending`
+        );
+        console.log('test:', response);
         if (!response.data.is_success) {
-          throw new Error("주문 상품을 불러오지 못했습니다.");
+          throw new Error('주문 상품을 불러오지 못했습니다.');
         }
 
         const data = await response.data;
         setOrderItems(data?.result || []);
       } catch (err) {
         setError(err.message);
-        navigate("/cart");
+        navigate('/cart');
       } finally {
         setLoading(false);
       }
@@ -76,7 +76,7 @@ function OrderForm() {
   // 쿠폰 가져오기
   const fetchCoupons = async () => {
     if (orderItems.length === 0) {
-      setCouponError("주문 상품이 준비되지 않았습니다.");
+      setCouponError('주문 상품이 준비되지 않았습니다.');
       return;
     }
 
@@ -84,13 +84,13 @@ function OrderForm() {
     try {
       const productIds = orderItems.map((item) => item.product_id);
       const params = new URLSearchParams();
-      productIds.forEach((id) => params.append("productIds", id));
+      productIds.forEach((id) => params.append('productIds', id));
       const url = `${VITE_API_BASE_URL}/api/v1/coupon/possible-order?${params.toString()}`;
 
       const response = await get(url);
 
       if (!response.data.is_success) {
-        throw new Error("쿠폰을 불러오지 못했습니다.");
+        throw new Error('쿠폰을 불러오지 못했습니다.');
       }
 
       const data = await response.data;
@@ -105,8 +105,8 @@ function OrderForm() {
 
   // 총 금액 계산
   const totalPrice = orderItems.reduce(
-      (acc, item) => acc + parseFloat(item.product_price) * item.quantity,
-      0
+    (acc, item) => acc + parseFloat(item.product_price) * item.quantity,
+    0
   );
   const discount = coupon ? coupon.discount_cost : 0;
   const finalPrice = totalPrice - discount;
@@ -120,132 +120,138 @@ function OrderForm() {
   // 결제 처리 (팝업 방식)
   const handlePayment = async () => {
     if (!orderItems.length) {
-      alert("주문 상품이 없습니다.");
+      alert('주문 상품이 없습니다.');
       return;
     }
 
     const paymentData = {
       order_id: orderId,
       item_name:
-          orderItems.length > 1
-              ? `${orderItems[0].product_name} 외 ${orderItems.length - 1}건`
-              : orderItems[0].product_name,
+        orderItems.length > 1
+          ? `${orderItems[0].product_name} 외 ${orderItems.length - 1}건`
+          : orderItems[0].product_name,
       quantity: orderItems.reduce((acc, item) => acc + item.quantity, 0),
       total_amount: finalPrice,
     };
 
     try {
-      const response = await post(`${VITE_API_BASE_URL}/api/v1/order/payment/${orderId}/ready`, paymentData);
-      console.log("paymentData:", paymentData);
+      const response = await post(
+        `${VITE_API_BASE_URL}/api/v1/order/payment/${orderId}/ready`,
+        paymentData
+      );
+      console.log('paymentData:', paymentData);
 
       if (!response.data.is_success) {
-        throw new Error("결제 준비에 실패했습니다.");
+        throw new Error('결제 준비에 실패했습니다.');
       }
 
       const data = await response.data;
       const redirectUrl = data.result; // body에서 redirectUrl 사용
 
       const paymentWindow = window.open(
-          redirectUrl,
-          "paymentPopup",
-          "width=500,height=700,scrollbars=yes"
+        redirectUrl,
+        'paymentPopup',
+        'width=500,height=700,scrollbars=yes'
       );
       if (!paymentWindow) {
-        alert("팝업 차단을 해제해주세요.");
+        alert('팝업 차단을 해제해주세요.');
       }
     } catch (err) {
-      console.error("결제 준비 실패:", err);
+      console.error('결제 준비 실패:', err);
       alert(err.message);
     }
   };
 
   if (loading) {
     return (
-        <div
-            className="min-h-screen bg-gray-50 flex items-center justify-center">
-          <div className="text-center text-gray-500 text-lg animate-pulse">로딩
-            중...
-          </div>
+      <div className='min-h-screen bg-gray-50 flex items-center justify-center'>
+        <div className='text-center text-gray-500 text-lg animate-pulse'>
+          로딩 중...
         </div>
+      </div>
     );
   }
 
   if (error) {
     return (
-        <div
-            className="min-h-screen bg-gray-50 flex items-center justify-center">
-          <div className="text-center text-red-600 text-lg">{error}</div>
-        </div>
+      <div className='min-h-screen bg-gray-50 flex items-center justify-center'>
+        <div className='text-center text-red-600 text-lg'>{error}</div>
+      </div>
     );
   }
 
   return (
-      <div className="pt-12 bg-gray-50 min-h-screen">
-        <div className="max-w-3xl mx-auto px-4 py-8">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">주문서</h1>
-          <div
-              className="bg-white p-6 rounded-lg shadow-md border-t border-gray-200">
-            <h3 className="text-lg font-semibold text-gray-900 mb-3">주문 상품</h3>
-            <div className="flex flex-col gap-4">
-              {orderItems.map((item) => (
-                  <CartOrderItem key={item.product_id} item={item}/>
-              ))}
-            </div>
+    <div className='pt-12 bg-gray-50 min-h-screen'>
+      <div className='max-w-3xl mx-auto px-4 py-8'>
+        <h1 className='text-2xl font-bold text-gray-900 mb-4'>주문서</h1>
+        <div className='bg-white p-6 rounded-lg shadow-md border-t border-gray-200'>
+          <h3 className='text-lg font-semibold text-gray-900 mb-3'>
+            주문 상품
+          </h3>
+          <div className='flex flex-col gap-4'>
+            {orderItems.map((item) => (
+              <CartOrderItem key={item.product_id} item={item} />
+            ))}
+          </div>
 
-            {/* 쿠폰 버튼 */}
-            <div className="mt-6 flex justify-end">
-              <button
-                  className="px-4 py-2 bg-indigo-600 text-white rounded-full"
-                  onClick={fetchCoupons}
-                  disabled={couponLoading}
-              >
-                {couponLoading ? "로딩 중..." : "쿠폰 사용"}
-              </button>
-            </div>
+          {/* 쿠폰 버튼 */}
+          <div className='mt-6 flex justify-end'>
+            <button
+              className='px-4 py-2 bg-indigo-600 text-white rounded-full'
+              onClick={fetchCoupons}
+              disabled={couponLoading}
+            >
+              {couponLoading ? '로딩 중...' : '쿠폰 사용'}
+            </button>
+          </div>
 
-            {/* 쿠폰 모달 */}
-            {showCoupons && (
-                <div
-                    className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
-                  <div className="bg-white p-6 rounded-lg max-w-md w-full">
-                    <h3 className="text-lg font-semibold mb-4">사용 가능한 쿠폰</h3>
-                    {couponError ? (
-                        <div className="text-red-600">{couponError}</div>
-                    ) : coupons.length === 0 ? (
-                        <div className="text-gray-500">사용 가능한 쿠폰이 없습니다.</div>
-                    ) : (
-                        coupons.map((couponItem) => (
-                            <CouponItem
-                                key={couponItem.user_received_coupon_id}
-                                coupon={couponItem}
-                                applyCoupon={applyCoupon}
-                            />
-                        ))
-                    )}
-                    <button
-                        className="mt-4 w-full py-2 bg-gray-200 rounded-full"
-                        onClick={() => setShowCoupons(false)}
-                    >
-                      닫기
-                    </button>
+          {/* 쿠폰 모달 */}
+          {showCoupons && (
+            <div className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4'>
+              <div className='bg-white p-6 rounded-lg max-w-md w-full'>
+                <h3 className='text-lg font-semibold mb-4'>사용 가능한 쿠폰</h3>
+                {couponError ? (
+                  <div className='text-red-600'>{couponError}</div>
+                ) : coupons.length === 0 ? (
+                  <div className='text-gray-500'>
+                    사용 가능한 쿠폰이 없습니다.
                   </div>
-                </div>
-            )}
-
-            {/* 결제 요약 및 버튼 */}
-            <PaymentSummary totalPrice={totalPrice} discount={discount}
-                            finalPrice={finalPrice}/>
-            <div className="mt-6 flex justify-end">
-              <button
-                  className="px-4 py-2.5 bg-indigo-600 text-white font-semibold rounded-md hover:bg-indigo-700 transition"
-                  onClick={handlePayment}
-              >
-                결제하기
-              </button>
+                ) : (
+                  coupons.map((couponItem) => (
+                    <CouponItem
+                      key={couponItem.user_received_coupon_id}
+                      coupon={couponItem}
+                      applyCoupon={applyCoupon}
+                    />
+                  ))
+                )}
+                <button
+                  className='mt-4 w-full py-2 bg-gray-200 rounded-full'
+                  onClick={() => setShowCoupons(false)}
+                >
+                  닫기
+                </button>
+              </div>
             </div>
+          )}
+
+          {/* 결제 요약 및 버튼 */}
+          <PaymentSummary
+            totalPrice={totalPrice}
+            discount={discount}
+            finalPrice={finalPrice}
+          />
+          <div className='mt-6 flex justify-end'>
+            <button
+              className='px-4 py-2.5 bg-indigo-600 text-white font-semibold rounded-md hover:bg-indigo-700 transition'
+              onClick={handlePayment}
+            >
+              결제하기
+            </button>
           </div>
         </div>
       </div>
+    </div>
   );
 }
 

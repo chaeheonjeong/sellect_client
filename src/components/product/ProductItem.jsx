@@ -3,7 +3,7 @@ import axios from "axios";
 import {useState} from "react";
 import {ShoppingCartIcon} from "@heroicons/react/24/solid";
 import {useAuth} from "../../context/AuthContext.jsx";
-import useApiService from "../../services/ApiService.js";
+import useApiService from "../../services/ApiService.ts";
 
 export default function ProductItem({product}) {
   const navigate = useNavigate();

@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import {Link, replace, useNavigate} from "react-router-dom";
 import CartItem from "../components/CartItem.jsx";
 import {useAuth} from "../context/AuthContext.jsx";
-import useApiService from "../services/ApiService.js";
+import useApiService from "../services/ApiService.ts";
 
 function CartPage() {
   const [cartItems, setCartItems] = useState([]);

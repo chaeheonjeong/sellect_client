@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import ProductImageUploader from "../../components/product/ProductImageUploader.jsx";
 import { v4 as uuidv4 } from "uuid";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
-import useApiService from "../../services/ApiService";
+import useApiService from "../../services/ApiService.js";
 import { useAuth } from "../../context/AuthContext";
 import * as tus from "tus-js-client";
 

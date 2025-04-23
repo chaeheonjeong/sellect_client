@@ -1,6 +1,6 @@
 import {Link, useNavigate, useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
-import useApiService from "../../services/ApiService.js";
+import useApiService from "../../services/ApiService.ts";
 
 const VITE_API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 

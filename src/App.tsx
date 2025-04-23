@@ -11,7 +11,7 @@ import ProductList from './pages/product/ProductList.jsx';
 import ProductDetail from './pages/product/ProductDetail.jsx';
 import Cart from './pages/Cart.jsx';
 import OrderList from './pages/OrderList.jsx';
-import OrderDetail from './pages/OrderDetail.jsx';
+import OrderDetail from './pages/OrderDetail.tsx';
 import CouponDownload from './pages/CouponDownload.jsx';
 import Profile from './pages/Profile.jsx';
 import Coupons from './components/Coupons.jsx';
