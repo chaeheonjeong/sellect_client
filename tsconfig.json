@@ -12,8 +12,18 @@
     "strictNullChecks": true,
     "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,
-    "forceConsistentCasingInFileNames": true // 파일명의 대소문자를 구분한다
+    "allowImportingTsExtensions": true,
+    "noEmit": true,
+    "forceConsistentCasingInFileNames": true, // 파일명의 대소문자를 구분한다
+    "baseUrl": "./src",
+    "paths": {
+      "@/*": ["*"],
+      "@components/*": ["components/*"],
+      "@pages/*": ["pages/*"],
+      "@context/*": ["context/*"],
+      "@services/*": ["services/*"]
+    }
   },
-  "include": ["src", "vites.config.js", "vite-env.d.ts"],
+  "include": ["src", "vite.config.js", "vite-env.d.ts"],
   "exclude": ["node_modules"]
 }

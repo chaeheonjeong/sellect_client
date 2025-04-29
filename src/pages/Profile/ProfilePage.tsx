@@ -1,8 +1,8 @@
 import React from 'react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext.js'; // AuthContext에서 상태 가져오기
+import { useAuth } from '@context/AuthContext'; // AuthContext에서 상태 가져오기
 
-const Profile = () => {
+const ProfilePage = () => {
   const location = useLocation();
   const { isLoggedIn, role, user } = useAuth();
 
@@ -109,4 +109,4 @@ const Profile = () => {
   );
 };
 
-export default Profile;
+export default ProfilePage;

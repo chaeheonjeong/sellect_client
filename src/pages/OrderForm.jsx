@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import CartOrderItem from '../components/order/OrderItem.jsx';
+import CartOrderItem from '@components/order/OrderItem';
 import CouponItem from '../components/CouponItem';
 import PaymentSummary from '../components/order/PaymentSummary';
-import { useAuth } from '../context/AuthContext.jsx';
-import useApiService from '../services/ApiService.ts';
+import { useAuth } from '@context/AuthContext.jsx';
+import useApiService from '@services/ApiService.ts';
 
 const VITE_API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 

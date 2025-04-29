@@ -1,0 +1,89 @@
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '@context/AuthContext';
+import useApiService from '@services/ApiService';
+
+const VITE_API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const LeaveAccountPage = () => {
+  const navigate = useNavigate();
+  const { isLoggedIn, logout } = useAuth();
+  const [confirmText, setConfirmText] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const { del } = useApiService();
+
+  const handleLeave = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    if (!isLoggedIn) {
+      setError('로그인 상태가 아닙니다.');
+      return;
+    }
+
+    if (confirmText !== '회원탈퇴') {
+      setError('확인을 위해 "회원탈퇴"를 정확히 입력해주세요.');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const response = await del(`${VITE_API_BASE_URL}/api/v1/users/leave`);
+      console.log('회원탈퇴 성공');
+      alert('회원탈퇴가 완료되었습니다.');
+      logout();
+      navigate('/home', { replace: true });
+    } catch (err) {
+      console.error('회원탈퇴 중 오류:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className='space-y-6 max-w-xl mx-auto'>
+      <h2 className='text-2xl font-bold text-gray-900 text-center'>회원탈퇴</h2>
+      <div className='bg-white p-6 rounded-2xl shadow-md border border-gray-100'>
+        <p className='text-gray-600 text-sm mb-4 text-center'>
+          계정과 모든 데이터가 삭제됩니다. 이 작업은 되돌릴 수 없습니다.
+        </p>
+        <p className='text-red-600 text-sm mb-4 text-center'>
+          <strong>"회원탈퇴"</strong>를 입력해 주세요.
+        </p>
+
+        <form onSubmit={handleLeave} className='space-y-4'>
+          <div>
+            <input
+              type='text'
+              value={confirmText}
+              onChange={(e) => setConfirmText(e.target.value)}
+              placeholder='회원탈퇴 입력'
+              className='w-full rounded-lg border border-gray-300 bg-white py-2 px-4 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-150 ease-in-out'
+            />
+          </div>
+
+          {error && <p className='text-sm text-red-600 text-center'>{error}</p>}
+
+          <div className='flex justify-end gap-3'>
+            <Link
+              to='/user/profile'
+              className='inline-flex items-center px-4 py-2 bg-gray-100 text-gray-700 text-sm font-medium rounded-full hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all duration-300'
+            >
+              취소
+            </Link>
+            <button
+              type='submit'
+              disabled={loading}
+              className={`inline-flex items-center px-4 py-2 bg-gradient-to-r from-red-600 to-red-700 text-white text-sm font-medium rounded-full hover:from-red-700 hover:to-red-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-all duration-300 transform hover:scale-105 ${
+                loading ? 'opacity-50 cursor-not-allowed' : ''
+              }`}
+            >
+              {loading ? '처리 중...' : '회원탈퇴'}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+export default LeaveAccountPage;

@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Order } from '../../types/orderTypes';
+import { Order } from '@/types/orderTypes';
 
 interface OrderHeaderProps
   extends Pick<Order, 'order_id' | 'update_at' | 'order_number'> {

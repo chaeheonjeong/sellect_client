@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
-import OrderHeader from '../components/order/OrderHeader.jsx';
-import OrderItem from '../components/order/OrderItem.jsx';
-import useApiService from '../services/ApiService.js';
-import { Order } from '../types/orderTypes.js';
+import OrderHeader from '@components/order/OrderHeader.jsx';
+import OrderItem from '@/components/order/OrderItem.js';
+import useApiService from '@services/ApiService';
+import { Order } from '@/types/orderTypes';
 
 const VITE_API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-function OrderList() {
+function OrderHistoryPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const { get } = useApiService();
@@ -128,4 +128,4 @@ function OrderList() {
   );
 }
 
-export default OrderList;
+export default OrderHistoryPage;

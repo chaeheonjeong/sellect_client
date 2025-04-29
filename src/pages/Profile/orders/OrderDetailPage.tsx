@@ -1,10 +1,10 @@
 import { useParams } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import axios, { AxiosError } from 'axios';
-import OrderHeader from '../components/order/OrderHeader.js';
-import PaymentSummary from '../components/order/PaymentSummary.jsx';
-import { Order } from '../types/orderTypes.js';
-import OrderItem from '../components/order/OrderItem.js';
+import OrderHeader from '@components/order/OrderHeader.jsx';
+import PaymentSummary from '../../../components/order/PaymentSummary.jsx';
+import { Order } from '../../../types/orderTypes.js';
+import OrderItem from '@/components/order/OrderItem.js';
 
 interface OrderDetailType extends Order {
   discount_cost: number;
@@ -13,7 +13,7 @@ interface OrderDetailType extends Order {
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL; // ✅ 환경 변수 사용
 
-function OrderDetail() {
+function OrderDetailPage() {
   const { orderId } = useParams();
   const [order, setOrder] = useState<OrderDetailType>();
   const [loading, setLoading] = useState(true);
@@ -101,4 +101,4 @@ function OrderDetail() {
   );
 }
 
-export default OrderDetail;
+export default OrderDetailPage;
