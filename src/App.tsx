@@ -4,31 +4,45 @@ import {
   Route,
   Routes,
 } from 'react-router-dom';
-import Navbar from '@components/Navbar.jsx';
-import HomePage from '@pages/Home/index.ts';
-import SignUpPage from '@pages/SignUp/index.ts';
-import ProductList from '@pages/product/ProductList.jsx';
-import ProductDetail from '@pages/product/ProductDetail.jsx';
-import CouponDownloadPage from '@pages/Coupon/index.ts';
-import CartPage from '@pages/Cart/index.ts';
-import OrderHistoryPage from '@pages/Profile/orders/index.ts';
-import OrderDetailPage from '@pages/Profile/orders/OrderDetailPage.tsx';
-import ProfilePage from '@pages/Profile/index.js';
-import ProductRegister from '@pages/seller/ProductRegister.jsx';
-import SellerHome from '@pages/seller/SellerHome.jsx';
-import LoginPage from '@pages/Login/index.ts';
+
 import { AuthProvider, useAuth } from '@context/AuthContext.jsx';
-import UnauthorizedPage from '@pages/Error/UnauthorizedPage.tsx';
+import Navbar from '@components/Navbar.jsx';
+import HomePage from '@pages/Home/HomePage.tsx';
+
+// Auth
+import SignUpPage from '@pages/SignUp/SignUpPage.tsx';
+import LoginPage from '@pages/Login/LoginPage.tsx';
+
+// Profile
+import ProfilePage from '@pages/Profile/ProfilePage.tsx';
+import LeaveAccountPage from '@pages/Profile/leave/LeaveAccountPage.tsx';
+import CouponPage from '@pages/Profile/coupons/CouponPage.tsx';
+import PaymentHistoryPage from '@pages/Profile/paymentHistory/PaymentHistoryPage.tsx';
+import { OrderHistoryPage, OrderDetailPage } from '@pages/Profile/orders';
+
+// Product
+import { ProductListPage, ProductDetailPage } from '@/pages/Product';
+
+// Order
 import OrderForm from '@pages/OrderForm.jsx';
-import CouponUpload from '@pages/seller/CouponUpload.jsx';
-import PaymentHistoryPage from '@pages/Profile/paymentHistory/PaymentHistoryPage';
-import LeaveAccountPage from '@/pages/Profile/leave/index.ts';
 import PaymentSuccess from '@pages/PaymentSuccess.jsx';
 import OrderComplete from '@pages/OrderComplete.jsx';
-import SellerDashboard from '@pages/seller/SellerDashboard.jsx';
-import NotFoundPage from '@pages/Error/NotFoundPage.js';
+
+// Coupon & Cart
+import CouponDownloadPage from '@pages/Coupon/CouponDownloadPage.jsx';
+import CartPage from '@pages/Cart/CartPage.jsx';
+
+// Seller
 import SellerProductDetail from '@pages/seller/SellerProductDetail.jsx';
 import ProductEdit from '@pages/seller/ProductEdit.jsx';
+import SellerDashboard from '@pages/seller/SellerDashboard.jsx';
+import CouponUpload from '@pages/seller/CouponUpload.jsx';
+import ProductRegister from '@pages/seller/ProductRegister.jsx';
+import SellerHome from '@pages/seller/SellerHome.jsx';
+
+// Error
+import NotFoundPage from '@pages/Error/NotFoundPage.js';
+import UnauthorizedPage from '@pages/Error/UnauthorizedPage.tsx';
 
 function App() {
   return (
@@ -61,7 +75,7 @@ function App() {
               path='/products'
               element={
                 <RouteGuard
-                  component={ProductList}
+                  component={ProductListPage}
                   allowedRoles={['GUEST', 'USER']}
                 />
               }
@@ -70,7 +84,7 @@ function App() {
               path='/products/:productId'
               element={
                 <RouteGuard
-                  component={ProductDetail}
+                  component={ProductDetailPage}
                   allowedRoles={['GUEST', 'USER']}
                 />
               }
@@ -185,10 +199,7 @@ function App() {
               <Route
                 path='coupons'
                 element={
-                  <RouteGuard
-                    component={CouponDownloadPage}
-                    allowedRoles={['USER']}
-                  />
+                  <RouteGuard component={CouponPage} allowedRoles={['USER']} />
                 }
               />
               <Route

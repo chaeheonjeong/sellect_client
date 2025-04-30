@@ -1,16 +1,16 @@
 import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import { ShoppingCartIcon } from '@heroicons/react/24/solid';
-import { useAuth } from '../../context/AuthContext.js';
-import useApiService from '../../services/ApiService.js';
+import { useAuth } from '@context/AuthContext.js';
+import useApiService from '@services/ApiService.js';
+import { ProductDetailType } from '@/types/productTypes.ts';
 
 const VITE_API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export default function ProductDetail() {
   const { productId } = useParams();
-  const [product, setProduct] = useState({});
+  const [product, setProduct] = useState<ProductDetailType>();
   const [isExpanded, setIsExpanded] = useState(false);
   const [showCartMessage, setShowCartMessage] = useState(false);
   const navigate = useNavigate();
@@ -20,11 +20,10 @@ export default function ProductDetail() {
   useEffect(() => {
     const fetchProductDetail = async () => {
       try {
-        // const response = await axios.get(`${VITE_API_BASE_URL}/api/v1/products/${productId}`);
         const response = await get(
           `${VITE_API_BASE_URL}/api/v1/products/${productId}`
         );
-        const fetchedProduct = response.data.result;
+        const fetchedProduct: ProductDetailType = response.data.result;
 
         // sequence 기준으로 이미지 정렬
         if (fetchedProduct.images) {
@@ -58,12 +57,12 @@ export default function ProductDetail() {
   const orderNow = async () => {
     try {
       const response = await post(`${VITE_API_BASE_URL}/api/v1/order/pending`, {
-        total_price: product.price,
+        total_price: product?.price,
         order_items: [
           {
             product_id: productId,
             quantity: 1,
-            price: product.price,
+            price: product?.price,
           },
         ],
       });
@@ -83,15 +82,15 @@ export default function ProductDetail() {
   };
 
   const representativeImage =
-    product.images && product.images.length > 0
-      ? product.images.find((img) => img.representative)?.image_url ||
-        product.images[0].image_url
+    product?.images && product.images.length > 0
+      ? product?.images.find((img) => img.representative)?.image_url ||
+        product?.images[0].image_url
       : 'https://via.placeholder.com/400';
 
   // TODO: 아마존 데이터셋에서 resizing 되지 않은 이미지들은 "SL"을 포함하는 이미지만 사용하도록 로직을 작성했지만,
   //  아마존 데이터셋이 아닌 직접 등록한 이미지에 대해서는 이를 적용하지 않아야 한다.
   const detailImages =
-    product.images && product.images.length > 0
+    product?.images && product.images.length > 0
       ? product.images
           .filter(
             (img) =>
@@ -106,9 +105,9 @@ export default function ProductDetail() {
   // 카테고리 경로 생성
   const categoryPath =
     [
-      product.large_category_name,
-      product.medium_category_name,
-      product.small_category_name,
+      product?.large_category_name,
+      product?.medium_category_name,
+      product?.small_category_name,
     ]
       .filter(Boolean)
       .join(' > ') || '미지정';
@@ -121,7 +120,7 @@ export default function ProductDetail() {
             <div className='w-full h-96'>
               <img
                 src={representativeImage}
-                alt={product.name || '상품 이미지'}
+                alt={product?.name || '상품 이미지'}
                 className='w-full h-full object-contain rounded-md shadow-sm'
               />
             </div>
@@ -129,7 +128,7 @@ export default function ProductDetail() {
           <div className='flex flex-col justify-between'>
             <div className='relative'>
               <h1 className='text-xl font-extrabold text-gray-900 mb-2'>
-                {product.name || '상품명'}
+                {product?.name || '상품명'}
               </h1>
 
               <div className='text-sm text-gray-600 mb-4 space-y-1'>
@@ -139,17 +138,17 @@ export default function ProductDetail() {
                 </p>
                 <p>
                   <span className='font-medium text-gray-800'>브랜드:</span>{' '}
-                  {product.brand_name || '미지정'}
+                  {product?.brand_name || '미지정'}
                 </p>
                 <p>
                   <span className='font-medium text-gray-800'>판매자:</span>{' '}
-                  {product.seller_name || '미지정'}
+                  {product?.seller_name || '미지정'}
                 </p>
               </div>
 
               <div className='flex items-center justify-between mb-4'>
                 <p className='text-gray-500 text-xl'>
-                  {product.price ? product.price.toLocaleString() : '0'}원
+                  {product?.price ? product?.price.toLocaleString() : '0'}원
                 </p>
                 <div className='flex items-center gap-2 relative'>
                   <button
@@ -191,7 +190,7 @@ export default function ProductDetail() {
                 </div>
               </div>
               <p className='text-gray-700 mb-8'>
-                {product.description || '상품 설명이 없습니다.'}
+                {product?.description || '상품 설명이 없습니다.'}
               </p>
             </div>
           </div>

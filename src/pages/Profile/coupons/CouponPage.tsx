@@ -1,18 +1,21 @@
 import { useState, useEffect } from 'react';
 import useApiService from '@services/ApiService.ts';
+import { CouponType } from '@/types/couponTypes';
 
 const VITE_API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
+type ButtonType = boolean | null;
+
 const CouponPage = () => {
-  const [coupons, setCoupons] = useState([]);
+  const [coupons, setCoupons] = useState<CouponType[]>();
   const [page] = useState(0);
   const [size] = useState(5);
-  const [isUsed, setIsUsed] = useState(null); // 기본값 null (전체)
+  const [btnType, setBtnType] = useState<ButtonType>(null); // 기본값 null (전체)
   const [loading, setLoading] = useState(false);
-  const { get, post } = useApiService();
+  const { get } = useApiService();
 
   // API 호출 함수
-  const fetchCoupons = async (isUsedFilter = null) => {
+  const fetchCoupons = async (isUsedFilter: ButtonType = null) => {
     setLoading(true);
     try {
       const url = `${VITE_API_BASE_URL}/api/v1/coupon?page=${page}&size=${size}${
@@ -35,12 +38,12 @@ const CouponPage = () => {
   };
 
   useEffect(() => {
-    fetchCoupons(isUsed);
-  }, [isUsed]);
+    fetchCoupons(btnType);
+  }, [btnType]);
 
   // 필터 버튼 핸들러
-  const handleFilterChange = (filter) => {
-    setIsUsed(filter);
+  const handleFilterChange = (filter: ButtonType) => {
+    setBtnType(filter);
   };
 
   return (
@@ -56,7 +59,7 @@ const CouponPage = () => {
           <button
             onClick={() => handleFilterChange(null)}
             className={`py-2 px-6 rounded-full text-sm font-medium transition-all duration-300 ${
-              isUsed === null
+              btnType === null
                 ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-md'
                 : 'bg-gray-200 text-gray-700 hover:bg-indigo-100 hover:text-indigo-600'
             }`}
@@ -66,7 +69,7 @@ const CouponPage = () => {
           <button
             onClick={() => handleFilterChange(false)}
             className={`py-2 px-6 rounded-full text-sm font-medium transition-all duration-300 ${
-              isUsed === false
+              btnType === false
                 ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-md'
                 : 'bg-gray-200 text-gray-700 hover:bg-indigo-100 hover:text-indigo-600'
             }`}
@@ -76,7 +79,7 @@ const CouponPage = () => {
           <button
             onClick={() => handleFilterChange(true)}
             className={`py-2 px-6 rounded-full text-sm font-medium transition-all duration-300 ${
-              isUsed === true
+              btnType === true
                 ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-md'
                 : 'bg-gray-200 text-gray-700 hover:bg-indigo-100 hover:text-indigo-600'
             }`}
@@ -86,7 +89,7 @@ const CouponPage = () => {
         </div>
 
         {/* 쿠폰 목록 */}
-        {loading ? (
+        {loading || coupons === undefined ? (
           <p className='text-center text-gray-600'>로딩 중...</p>
         ) : coupons.length > 0 ? (
           <div className='space-y-6'>
@@ -124,7 +127,7 @@ const CouponPage = () => {
               현재 발급된 쿠폰이 없습니다.
             </p>
             <button
-              onClick={() => fetchCoupons(isUsed)}
+              onClick={() => fetchCoupons(btnType)}
               className='inline-flex items-center px-8 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-lg font-medium rounded-full hover:from-indigo-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-300 transform hover:scale-105 shadow-md'
             >
               새로고침
