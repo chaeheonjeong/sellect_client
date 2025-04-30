@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react';
 import useApiService from '@services/ApiService.ts';
-import { CouponType } from '@/types/couponTypes';
+import { CouponProfileType } from '@/types/couponTypes';
 
 const VITE_API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 type ButtonType = boolean | null;
 
 const CouponPage = () => {
-  const [coupons, setCoupons] = useState<CouponType[]>();
+  const [coupons, setCoupons] = useState<CouponProfileType[]>();
   const [page] = useState(0);
   const [size] = useState(5);
   const [btnType, setBtnType] = useState<ButtonType>(null); // 기본값 null (전체)

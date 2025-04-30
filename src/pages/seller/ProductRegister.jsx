@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import ProductImageUploader from '../../components/product/ProductImageUploader.jsx';
+import ProductImageUploader from './ProductImageUploader.jsx';
 import { v4 as uuidv4 } from 'uuid';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import useApiService from '../../services/ApiService.js';

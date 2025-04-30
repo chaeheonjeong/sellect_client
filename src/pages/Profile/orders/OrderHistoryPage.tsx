@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import OrderHeader from '@components/order/OrderHeader.jsx';
-import OrderItem from '@/components/order/OrderItem.js';
+import OrderItem from '@components/order/OrderItem.js';
 import useApiService from '@services/ApiService';
 import { Order } from '@/types/orderTypes';
 

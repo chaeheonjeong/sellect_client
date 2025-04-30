@@ -2,9 +2,9 @@ import { useParams } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import axios, { AxiosError } from 'axios';
 import OrderHeader from '@components/order/OrderHeader.jsx';
-import PaymentSummary from '../../../components/order/PaymentSummary.jsx';
+import PaymentSummary from '@components/order/PaymentSummary.tsx';
 import { Order } from '../../../types/orderTypes.js';
-import OrderItem from '@/components/order/OrderItem.js';
+import OrderItem from '@components/order/OrderItem.js';
 
 interface OrderDetailType extends Order {
   discount_cost: number;

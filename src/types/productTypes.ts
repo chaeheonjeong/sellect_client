@@ -1,25 +1,33 @@
-export interface ProductType {
+interface ProductIdentity {
   product_id: string;
   brand_name: string;
-  image_url: string;
   name: string;
+}
+
+interface ProductPricing {
   price: number;
+}
+
+interface ProductThumbnail {
+  image_url: string;
+}
+
+interface ProductSearchSpecificInfo {
   rating: number;
   category_id: number;
 }
 
-export interface ProductDetailType {
+interface ProductDetailImages {
+  images: ProductImageType[];
+}
+
+interface ProductDetailSpecificInfo {
   description: string;
-  brand_name: string;
   large_category_name: string;
   medium_category_name: string;
   small_category_name: string;
-  name: string;
-  price: number;
-  product_id: string;
   seller_name: string;
   stock: number;
-  images: ProductImageType[];
 }
 
 interface ProductImageType {
@@ -28,6 +36,15 @@ interface ProductImageType {
   sequence: number;
   image_url: string;
 }
+
+export type ProductType = ProductIdentity &
+  ProductPricing &
+  ProductThumbnail &
+  ProductSearchSpecificInfo;
+export type ProductDetailType = ProductIdentity &
+  ProductPricing &
+  ProductDetailImages &
+  ProductDetailSpecificInfo;
 
 export const SORT_TYPE = {
   LATEST: 'LATEST',

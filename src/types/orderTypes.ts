@@ -13,3 +13,9 @@ export interface OrderItem {
   product_price: number;
   quantity: number;
 }
+
+interface CartItemId {
+  cart_item_id: number;
+}
+
+export type CartType = OrderItem & CartItemId;

@@ -1,11 +1,11 @@
-// CouponRegisterPage.jsx
 import React, { useState, useEffect } from 'react';
 import useApiService from '../../services/ApiService.ts';
+import { CouponDownloadType } from '@/types/couponTypes.ts';
 
 const VITE_API_BASE_URL = import.meta.env.VITE_API_BASE_URL; // 환경 변수 불러오기
 
 const CouponDownloadPage = () => {
-  const [coupons, setCoupons] = useState([]);
+  const [coupons, setCoupons] = useState<CouponDownloadType[]>([]);
   const [page, setPage] = useState(0);
   const [size] = useState(5);
   const [totalPages, setTotalPages] = useState(0);
@@ -39,14 +39,11 @@ const CouponDownloadPage = () => {
     fetchCoupons(page);
   }, [page]);
 
-  const handleRegisterCoupon = async (couponId) => {
+  const handleRegisterCoupon = async (couponId: string) => {
     try {
-      // const response = await fetch(`${VITE_API_BASE_URL}/api/v1/coupon/register/${couponId}`, {
-      //   method: 'PUT',
-      //   credentials: 'include',
-      // });
       const response = await put(
-        `${VITE_API_BASE_URL}/api/v1/coupon/register/${couponId}`
+        `${VITE_API_BASE_URL}/api/v1/coupon/register/${couponId}`,
+        ''
       );
       console.log(response);
       if (!response.data.is_success) throw new Error('쿠폰 발급 실패');
@@ -64,7 +61,7 @@ const CouponDownloadPage = () => {
     }
   };
 
-  const handlePageChange = (newPage) => {
+  const handlePageChange = (newPage: number) => {
     if (newPage >= 0 && newPage < totalPages) {
       setPage(newPage);
     }

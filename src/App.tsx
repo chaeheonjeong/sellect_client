@@ -21,16 +21,18 @@ import PaymentHistoryPage from '@pages/Profile/paymentHistory/PaymentHistoryPage
 import { OrderHistoryPage, OrderDetailPage } from '@pages/Profile/orders';
 
 // Product
-import { ProductListPage, ProductDetailPage } from '@/pages/Product';
+import { ProductListPage, ProductDetailPage } from '@pages/Product';
 
 // Order
-import OrderForm from '@pages/OrderForm.jsx';
-import PaymentSuccess from '@pages/PaymentSuccess.jsx';
-import OrderComplete from '@pages/OrderComplete.jsx';
+import {
+  OrderFormPage,
+  OrderCompletePage,
+  PaymentSuccessPage,
+} from '@pages/Order';
 
 // Coupon & Cart
 import CouponDownloadPage from '@pages/Coupon/CouponDownloadPage.jsx';
-import CartPage from '@pages/Cart/CartPage.jsx';
+import CartPage from '@pages/Cart/CartPage.tsx';
 
 // Seller
 import SellerProductDetail from '@pages/seller/SellerProductDetail.jsx';
@@ -160,7 +162,7 @@ function App() {
             <Route
               path='/order/form'
               element={
-                <RouteGuard component={OrderForm} allowedRoles={['USER']} />
+                <RouteGuard component={OrderFormPage} allowedRoles={['USER']} />
               }
             />
             <Route
@@ -216,7 +218,7 @@ function App() {
               path='/payment/success'
               element={
                 <RouteGuard
-                  component={PaymentSuccess}
+                  component={PaymentSuccessPage}
                   allowedRoles={['USER']}
                 />
               }
@@ -224,7 +226,10 @@ function App() {
             <Route
               path='/order/complete'
               element={
-                <RouteGuard component={OrderComplete} allowedRoles={['USER']} />
+                <RouteGuard
+                  component={OrderCompletePage}
+                  allowedRoles={['USER']}
+                />
               }
             />
 

@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
 import { Link, replace, useNavigate } from 'react-router-dom';
-import CartItem from '@components/CartItem.jsx';
+import CartItem from '@pages/Cart/components/CartItem.jsx';
 import { useAuth } from '@context/AuthContext.jsx';
 import useApiService from '@services/ApiService.ts';
+import { CartType } from '@/types/orderTypes';
+import { isAxiosError } from 'axios';
 
 function CartPage() {
-  const [cartItems, setCartItems] = useState([]);
+  const [cartItems, setCartItems] = useState<CartType[]>([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const { updateCartCount } = useAuth();
@@ -23,16 +25,14 @@ function CartPage() {
 
         if (response.data.is_success) {
           setCartItems(response.data.result);
-        } else {
-          console.error('❌ 장바구니 조회 실패:', response.data.message);
-          alert('장바구니를 불러오지 못했습니다.');
         }
-      } catch (error) {
-        console.error(
-          '❌ 장바구니 조회 오류:',
-          error.response?.data || error.message
-        );
-        alert('장바구니 데이터를 불러오는 데 실패했습니다.');
+      } catch (error: unknown) {
+        if (isAxiosError(error)) {
+          console.error(
+            '❌ 장바구니 조회 오류:',
+            error.response?.data || error.message
+          );
+        }
       } finally {
         setLoading(false);
       }
@@ -42,7 +42,7 @@ function CartPage() {
   }, []);
 
   // ✅ 수량 변경 요청
-  const changeQuantity = async (cartItemId, change) => {
+  const changeQuantity = async (cartItemId: number, change: number) => {
     try {
       if (!cartItemId) {
         alert('상품 ID가 올바르지 않습니다.');
@@ -65,19 +65,19 @@ function CartPage() {
         );
       } else {
         console.error('❌ 수량 변경 실패:', response.data.message);
-        alert('수량 변경에 실패했습니다.');
       }
-    } catch (error) {
-      console.error(
-        '❌ 수량 변경 오류:',
-        error.response?.data || error.message
-      );
-      alert('수량 변경에 실패했습니다.');
+    } catch (error: unknown) {
+      if (isAxiosError(error)) {
+        console.error(
+          '❌ 수량 변경 오류:',
+          error.response?.data || error.message
+        );
+      }
     }
   };
 
   // ✅ 장바구니 아이템 삭제 요청
-  const removeItem = async (cartItemId) => {
+  const removeItem = async (cartItemId: number) => {
     try {
       if (!cartItemId) {
         alert('상품 ID가 올바르지 않습니다.');
@@ -85,10 +85,6 @@ function CartPage() {
       }
 
       const baseApiUrl = import.meta.env.VITE_API_BASE_URL;
-      // const response = await axios.delete(`${baseApiUrl}/api/v1/carts/${cartItemId}`, {
-      //   withCredentials: true,
-      //   headers: { "Content-Type": "application/json" },
-      // });
 
       const response = await del(`${baseApiUrl}/api/v1/carts/${cartItemId}`);
 
@@ -102,8 +98,9 @@ function CartPage() {
         alert('장바구니 삭제에 실패했습니다.');
       }
     } catch (error) {
-      console.error('❌ 삭제 오류:', error.response?.data || error.message);
-      alert('장바구니 삭제 요청이 실패했습니다.');
+      if (isAxiosError(error)) {
+        console.error('❌ 삭제 오류:', error.response?.data || error.message);
+      }
     }
   };
 
@@ -137,17 +134,18 @@ function CartPage() {
       if (response.data.is_success) {
         const orderId = response.data.result.order_id;
         console.log('✅ 주문 생성 성공, 주문 ID:', orderId);
-        navigate('/order/form', { state: { orderId } }, replace(true));
+        navigate('/order/form', { state: { orderId } });
       } else {
         console.error('❌ 주문 생성 실패:', response.data.message);
         alert('주문 생성에 실패했습니다.');
       }
     } catch (error) {
-      console.error(
-        '❌ 주문 생성 오류:',
-        error.response?.data || error.message
-      );
-      alert('주문 생성 요청이 실패했습니다.');
+      if (isAxiosError(error)) {
+        console.error(
+          '❌ 주문 생성 오류:',
+          error.response?.data || error.message
+        );
+      }
     }
   };
 

@@ -1,4 +1,4 @@
-import ProductItem from '../../../components/product/ProductItem.jsx';
+import ProductItem from '@pages/Product/components/ProductItem.jsx';
 import { ProductType, SortType, SORT_TYPE } from '@/types/productTypes.js';
 import { FilterType } from '@/types/filterTypes.js';
 

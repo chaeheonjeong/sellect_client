@@ -28,9 +28,7 @@ export default function Navbar() {
           </Link>
 
           {/* Search Bar */}
-          {(role === 'GUEST' || role === 'USER') && (
-            <SearchBar apiBaseUrl={VITE_API_BASE_URL} />
-          )}
+          {(role === 'GUEST' || role === 'USER') && <SearchBar />}
 
           {/* Navigation Links */}
           <div className='flex items-center space-x-6'>

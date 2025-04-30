@@ -1,22 +1,24 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import CartOrderItem from '@components/order/OrderItem';
-import CouponItem from '../components/CouponItem';
-import PaymentSummary from '../components/order/PaymentSummary';
-import { useAuth } from '@context/AuthContext.jsx';
+import OrderItem from '@components/order/OrderItem';
+import CouponItem from '@pages/Order/components/CouponItem.tsx';
+import PaymentSummary from '@components/order/PaymentSummary.tsx';
+import { useAuth } from '@context/AuthContext.tsx';
 import useApiService from '@services/ApiService.ts';
+import { OrderItem as OrderItemType } from '@/types/orderTypes';
+import { CouponOrderType } from '@/types/couponTypes';
+import { isAxiosError } from 'axios';
 
 const VITE_API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-function OrderForm() {
-  const [orderItems, setOrderItems] = useState([]);
-  const [coupons, setCoupons] = useState([]);
-  const [coupon, setCoupon] = useState(null);
+function OrderFormPage() {
+  const [orderItems, setOrderItems] = useState<OrderItemType[]>([]);
+  const [coupons, setCoupons] = useState<CouponOrderType[]>([]);
+  const [discountCost, setDiscountCost] = useState(0);
   const [showCoupons, setShowCoupons] = useState(false);
   const [loading, setLoading] = useState(true);
   const [couponLoading, setCouponLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [couponError, setCouponError] = useState(null);
+  const [couponError, setCouponError] = useState('');
   const { updateCartCount } = useAuth();
   const { get, post } = useApiService();
 
@@ -26,7 +28,7 @@ function OrderForm() {
 
   // 결제 성공 메시지 리스너
   useEffect(() => {
-    const handlePaymentMessage = (event) => {
+    const handlePaymentMessage = (event: MessageEvent) => {
       if (event.data === 'PAYMENT_SUCCESS') {
         navigate('/order/complete', {
           state: {
@@ -54,7 +56,6 @@ function OrderForm() {
         const response = await get(
           `${VITE_API_BASE_URL}/api/v1/orders/${orderId}/pending`
         );
-        console.log('test:', response);
         if (!response.data.is_success) {
           throw new Error('주문 상품을 불러오지 못했습니다.');
         }
@@ -62,8 +63,10 @@ function OrderForm() {
         const data = await response.data;
         setOrderItems(data?.result || []);
       } catch (err) {
-        setError(err.message);
-        navigate('/cart');
+        if (isAxiosError(err)) {
+          console.error(err);
+          navigate('/cart');
+        }
       } finally {
         setLoading(false);
       }
@@ -84,8 +87,8 @@ function OrderForm() {
     try {
       const productIds = orderItems.map((item) => item.product_id);
       const params = new URLSearchParams();
-      productIds.forEach((id) => params.append('productIds', id));
-      const url = `${VITE_API_BASE_URL}/api/v1/coupon/possible-order?${params.toString()}`;
+      productIds.forEach((id) => params.append('productIds', id.toString()));
+      const url = `${VITE_API_BASE_URL}/api/v1/coupon/possible-order?${params}`;
 
       const response = await get(url);
 
@@ -97,7 +100,9 @@ function OrderForm() {
       setCoupons(data?.result || []);
       setShowCoupons(true);
     } catch (err) {
-      setCouponError(err.message);
+      if (isAxiosError(err)) {
+        setCouponError(err.message);
+      }
     } finally {
       setCouponLoading(false);
     }
@@ -105,15 +110,15 @@ function OrderForm() {
 
   // 총 금액 계산
   const totalPrice = orderItems.reduce(
-    (acc, item) => acc + parseFloat(item.product_price) * item.quantity,
+    (acc, item) =>
+      acc + parseFloat(item.product_price.toString()) * item.quantity,
     0
   );
-  const discount = coupon ? coupon.discount_cost : 0;
-  const finalPrice = totalPrice - discount;
+  const finalPrice = totalPrice - discountCost;
 
   // 쿠폰 적용
-  const applyCoupon = (selectedCoupon) => {
-    setCoupon(selectedCoupon);
+  const applyCoupon = (discountCost: number) => {
+    setDiscountCost(discountCost);
     setShowCoupons(false);
   };
 
@@ -158,7 +163,6 @@ function OrderForm() {
       }
     } catch (err) {
       console.error('결제 준비 실패:', err);
-      alert(err.message);
     }
   };
 
@@ -168,14 +172,6 @@ function OrderForm() {
         <div className='text-center text-gray-500 text-lg animate-pulse'>
           로딩 중...
         </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className='min-h-screen bg-gray-50 flex items-center justify-center'>
-        <div className='text-center text-red-600 text-lg'>{error}</div>
       </div>
     );
   }
@@ -190,7 +186,15 @@ function OrderForm() {
           </h3>
           <div className='flex flex-col gap-4'>
             {orderItems.map((item) => (
-              <CartOrderItem key={item.product_id} item={item} />
+              <OrderItem
+                key={item.product_id}
+                brand_name={item.brand_name}
+                image_url={item.image_url}
+                product_id={item.product_id}
+                product_name={item.product_name}
+                product_price={item.product_price}
+                quantity={item.quantity}
+              />
             ))}
           </div>
 
@@ -238,7 +242,7 @@ function OrderForm() {
           {/* 결제 요약 및 버튼 */}
           <PaymentSummary
             totalPrice={totalPrice}
-            discount={discount}
+            discount={discountCost}
             finalPrice={finalPrice}
           />
           <div className='mt-6 flex justify-end'>
@@ -255,4 +259,4 @@ function OrderForm() {
   );
 }
 
-export default OrderForm;
+export default OrderFormPage;
