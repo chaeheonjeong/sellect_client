@@ -476,7 +476,7 @@ function ProductRegister() {
                     <DragDropContext onDragEnd={handleDragEnd}>
                       <Droppable
                         droppableId='previewImages'
-                        direction='horizontal'
+                        direction='vertical'
                       >
                         {(provided) => (
                           <div

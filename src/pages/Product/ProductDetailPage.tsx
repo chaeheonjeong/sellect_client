@@ -8,7 +8,7 @@ import { ProductDetailType } from '@/types/productTypes.ts';
 
 const VITE_API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-export default function ProductDetail() {
+export default function ProductDetailPage() {
   const { productId } = useParams();
   const [product, setProduct] = useState<ProductDetailType>();
   const [isExpanded, setIsExpanded] = useState(false);
